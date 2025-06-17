@@ -20,7 +20,6 @@ df["IsWeekend"] = df["DayOfWeek"].isin([5, 6]).astype(int)
 df["isSchoolHoliday"] = df["isSchoolHoliday"].fillna(0).astype(int)
 df["isPublicHoliday"] = df["isPublicHoliday"].fillna(0).astype(int)
 df = df.sort_values(by=["Item Name", "Date"])
-df["Usage_Rolling3"] = df.groupby("Item Name")["Usage"].shift(1).rolling(3).mean()
 
 #Define numeric features
 numeric_features = ["Sales", "DayOfWeek", "Month", "IsWeekend", "isSchoolHoliday", "isPublicHoliday"]
@@ -50,3 +49,6 @@ with open("scaler.pkl", "wb") as f:
     pickle.dump(scaler, f)
 with open("imputer.pkl", "wb") as f:
     pickle.dump(imputer, f)
+
+
+
