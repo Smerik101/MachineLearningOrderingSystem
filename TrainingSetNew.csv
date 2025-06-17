@@ -1,4 +1,4 @@
-Date,Item Name,Sales,DayOfWeek,IsWeekend,isPublicHoliday,isSchoolHoliday,Usage,End Stock,,,,,
+Date,Item Name,Sales,DayOfWeek,IsWeekend,isPublicHoliday,isSchoolHoliday,Usage,End Stock,Unnamed: 9,Unnamed: 10,Unnamed: 11,Unnamed: 12,Unnamed: 13
 1/12/2024,MUFFIN ENGLISH,19154.77,6,1,0,0,314,,,,,,
 1/12/2024,BUN MCCRISPY,19154.77,6,1,0,0,45,,,,,,
 1/12/2024,BUN REGULAR,19154.77,6,1,0,0,549,,,,,,
@@ -573,9 +573,3 @@ Date,Item Name,Sales,DayOfWeek,IsWeekend,isPublicHoliday,isSchoolHoliday,Usage,E
 23/03/2025,MUFFIN ENGLISH,19300.31,6,1,0,0,356,720,,,,,
 23/03/2025,BUN BIG MAC,19300.31,6,1,0,0,115,330,,,,,
 23/03/2025,BUN 4 INCH,19300.31,6,1,0,0,242,810,,,,,
-,,,,,,,,,,,,,
-,,,,,,,,,,,,,
-,,,,,,,,,,,,,
-,,,,,,,,,,,,,
-,,,,,,,,,,,,,
-,,,,,,,,,,,,,
