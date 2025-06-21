@@ -1,9 +1,14 @@
 from tkinter import *
 from stocktake import open_stocktake
+from ordering import open_ordering
 
 def stocktakerun():
     window.withdraw()
     open_stocktake(window)
+
+def orderingrun():
+    window.withdraw()
+    open_ordering(window)
 
 def mainmenu():
 
@@ -16,7 +21,7 @@ def mainmenu():
     button1 = Button(frame, text = "Do Stocktake", font = ("Arial", 8, "bold"), command = stocktakerun)
     button1.grid(row = 3, column = 0, padx = 10, pady= 20, sticky = W, columnspan= 2)
 
-    button2 = Button(frame, text = "Propose Order", font = ("Arial", 8, "bold"))
+    button2 = Button(frame, text = "Propose Order", font = ("Arial", 8, "bold"), command = orderingrun)
     button2.grid(row = 3, column = 1, padx = 10, pady = 20,  sticky = W,)
 
 # Initiate GUI upon program launch
