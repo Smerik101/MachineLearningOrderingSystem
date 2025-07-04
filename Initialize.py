@@ -6,7 +6,7 @@ import pandas as pd
 au_holidays = holidays.country_holidays('AU', subdiv='ACT', years=2025)
 
 #Initialize Todays Date
-today_date = date.today()
+today_date = date.today() + timedelta(days=1)#Change day for troubleshooting
 today_day = today_date.weekday()
 
 if today_date.weekday() == 6 or today_date.weekday() == 5:
@@ -57,14 +57,25 @@ buffer_dict = {
 }
 
 ## Order Delivery Setup
-order_days = (0, 3) #Days ordering is completed
+order_days = (1, 5) #Days ordering is completed
 delivery_delay = 3 #Time for order to arrive
 
-delivery_day = []
+delivery_days = []
 for i in range(len(order_days)):
     x = order_days[i] + delivery_delay
     if x > 6:
-        x = x - 7
-    delivery_day.append(x)
+        x = x-7
+    delivery_days.append(x)
 
+order_for_days = []
+for i in range(len(delivery_days)):
+    x = delivery_days[i]
+    x = x+1
+    y = 1
+    while x not in delivery_days:
+        y = y+1
+        x = x+1
+        if x > 6:
+            x = x-7
+    order_for_days.append(y)
 

@@ -4,37 +4,43 @@ import pandas as pd
 from datetime import datetime, timedelta
 import sys
 import tkinter as tk
+from Initialize import buffer_dict, order_days, delivery_days, order_for_days, today_day, au_holidays, df
 
-#Ordering setup for twice a week deliveries.
-#Setup for ordering Monday, and early delivery Tuesday.
-#Setup for ordering Thursday and early delivery Friday.
-#Modify parameters below to change.
+def close(stock_window, parent):
+    stock_window.destroy()
+    parent.deiconify()
 
 def day_of_week():
-    return datetime.now().weekday()-1
+    return datetime.now().weekday()
 
+def weekday_from_int(x): #Convert int to day of week
+    base_date = datetime(2024, 1, 1)
+    return base_date + timedelta(days=x)
 
 def check_day():
-    today = day_of_week()
-    if today == 0:  # Monday → Tues, Wed, Thurs
-        return 3
-    elif today == 3:  # Thursday → Fri, Sat, Sun, Mon
-        return 4
+    if today_day in order_days:
+        index = order_days.index(today_day)
+        start_day = delivery_days[index]
+        order_days_amount = order_for_days[index]
+        return start_day, order_days_amount
+
     else:
         print("Ordering must be done on ordering day")
         sys.exit()
 
-
 #Get user input for day projections and parameters.
 def get_inputs():
+    start_day, order_days_amount = check_day()
     day_inputs = []
-    for i in range(1, check_day() + 1):
-        future_date = datetime.now() + timedelta(days=i)
-        day_name = future_date.strftime("%A")  # e.g., 'Tuesday'
+    for i in range(0, order_days_amount):
+        future_date = weekday_from_int(start_day) + timedelta(days=i)
+        day_name = future_date.strftime("%A")
 
         sales = int(input(f"Projected sales for {day_name}? "))
         school_holiday = int(input(f"Is {day_name} a school holiday? (1=Yes, 0=No): "))
-        public_holiday = int(input(f"Is {day_name} a public holiday? (1=Yes, 0=No): "))
+        public_holiday = 0
+        if future_date in au_holidays:
+            public_holiday = 1
 
         day_inputs.append({
             "date": future_date,
@@ -44,21 +50,7 @@ def get_inputs():
         })
     return day_inputs
 
-
-#Setup Buffers for each product.
-def custom_buffers(item):
-    buffer_dict = {
-        "BUN REGULAR": 100,
-        "MUFFIN ENGLISH": 100,
-        "BUN 4 INCH": 80,
-        "BUN BIG MAC": 60,
-        "BUN MCCRISPY": 30,
-        "BUN GOURMET": 30,
-    }
-    return buffer_dict.get(item, 0)
-
-
-def run_calculations(df, unique_products, imputer, scaler, encoder, model):
+def run_calculations(unique_products, imputer, scaler, encoder, model):
         # Predict usage
         order_window_predictions = {item: 0.0 for item in unique_products}
         for day in get_inputs():
@@ -68,8 +60,7 @@ def run_calculations(df, unique_products, imputer, scaler, encoder, model):
 
             for item in unique_products:
                 categorical = encoder.transform(pd.DataFrame([[item]], columns=["Item Name"]))
-                numeric = np.array([[day["sales"], dow, month, is_weekend,
-                                         day["school_holiday"], day["public_holiday"]]])
+                numeric = np.array([[day["sales"], dow, month, is_weekend, day["school_holiday"], day["public_holiday"]]])
                 combined = np.hstack((numeric, categorical))
                 combined_imputed = imputer.transform(combined)
                 combined_scaled = scaler.transform(combined_imputed)
@@ -91,16 +82,12 @@ def run_calculations(df, unique_products, imputer, scaler, encoder, model):
         for item in unique_products:
             predicted_usage = order_window_predictions[item]
             current_stock = latest_stock[item]
-            buffer = custom_buffers(item)
+            buffer = buffer_dict.get(item, 0)
             order_qty = max(0, round(predicted_usage + buffer - current_stock))
             print(
                 f"{item}: Order {order_qty} units (Predicted={round(predicted_usage, 2)}, Current={current_stock}, Buffer={buffer})")
 
-
 def open_ordering(parent):
-    df = pd.read_csv("TrainingSetNew.csv")
-    df["Item Name"] = df["Item Name"].str.strip()
-    df["Date"] = pd.to_datetime(df["Date"], format="%d/%m/%Y", errors="coerce")
     unique_products = df["Item Name"].dropna().unique()
 
     with open("linear_model.pkl", "rb") as f:
@@ -112,4 +99,16 @@ def open_ordering(parent):
     with open("imputer.pkl", "rb") as f:
         imputer = pickle.load(f)
 
-    run_calculations(df, unique_products, imputer, scaler, encoder, model)
+    order_window = tk.Toplevel()
+    order_window.title("Propose Order")
+    order_window.geometry('400x300')
+    order_window.resizable(width=False, height=False)
+    frame1 = tk.Frame(order_window)
+    frame1.grid()
+    Label1 = tk.Label(frame1, text="Propose Order", font=("Ariel", 10, "bold"))
+    Label1.grid(row=1, column=1, padx=10, pady=10, columnspan=2, sticky=tk.W)
+    Button1 = tk.Button(frame1, text="Calculate Order", command=lambda:run_calculations(unique_products, imputer, scaler, encoder, model))
+    Button1.grid(row=2, column=2, padx=10, pady=10, sticky=tk.W)
+    Button2 = tk.Button(frame1, text="Cancel", command=lambda: close(order_window, parent))
+    Button2.grid(row=2, column=1, padx=10, pady=10, sticky=tk.W)
+
