@@ -2,7 +2,6 @@ from tkinter import *
 from stocktake import open_stocktake
 from ordering import open_ordering
 
-
 def stocktakerun():
     window.withdraw()
     open_stocktake(window)
