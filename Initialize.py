@@ -33,18 +33,8 @@ if yesterday_date in au_holidays:
 else:
     yesterday_public_holiday = 0
 
-
 yesterday_date = yesterday_date.strftime("%d/%m/%Y")
 today_date = today_date.strftime("%d/%m/%Y")
-
-# Import Dataset
-df = pd.read_csv("TrainingSetNew.csv")
-df["Item Name"] = df["Item Name"].str.strip()
-df["Date"] = pd.to_datetime(df["Date"], format="%d/%m/%Y", errors="coerce")
-df.to_csv("backup.csv", index=False)
-df["Date"].head()
-df = df[df["Date"].notnull()]
-
 
 ## Buffer Setup
 buffer_dict = {
