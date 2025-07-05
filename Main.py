@@ -3,12 +3,10 @@ from stocktake import open_stocktake
 from ordering import open_ordering
 
 def stocktakerun():
-    window.withdraw()
-    open_stocktake(window)
+    open_stocktake(window, frame)
 
 def orderingrun():
-    window.withdraw()
-    open_ordering(window)
+    open_ordering(window, frame)
 
 def mainmenu():
 
