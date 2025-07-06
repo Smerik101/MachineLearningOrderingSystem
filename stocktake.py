@@ -106,7 +106,6 @@ def stocktake(df, sales_entry, frame1, stock_window, parent):
         data_frame.loc[currentItem, "Usage"] = usage
         data_frame.loc[currentItem, "End Stock"] = current_stock
         currentItem += 1
-        print(data_frame) ##TESTING##
 
     data_frame.to_csv("TrainingSetNew.csv", mode="a", header=False, index=False)
 
@@ -146,9 +145,11 @@ def open_stocktake(parent):
         sales_entry1 = tk.Entry(frame1,  validate="key", validatecommand=(validation, "%S"))
         label2 = tk.Label(frame1, text="Day Sales:", font=("Ariel", 10, "bold"))
         button1 = tk.Button(frame1, text="Enter", command=lambda:check_sales(df, sales_entry1, frame1, stock_window, parent))
+        button2 = tk.Button(frame1, text="Cancel", command=lambda:close(stock_window, parent))
         sales_entry1.grid(row=2, column=1, padx=10, sticky=tk.W)
         label2.grid(row=1, column=1, padx=10, pady=10, sticky=tk.W)
         button1.grid(row=2, column=2, padx=10, pady=10, sticky=tk.W)
+        button2.grid(row=2, column=3, padx=10, pady=10, sticky=tk.W)
 
 
 
