@@ -1,7 +1,11 @@
+import sys
 from tkinter import *
 from stocktake import open_stocktake
 from ordering import open_ordering
-from Initialize import open_setup
+from setup import open_setup
+
+def close():
+    sys.exit()
 
 def stocktakerun():
     open_stocktake(window, frame)
@@ -27,7 +31,12 @@ def mainmenu():
     button2.grid(row = 3, column = 1, padx = 10, pady = 20,  sticky = W,)
 
     button3 = Button(frame, text="Setup", font=("Arial", 8, "bold"), command = setuprun)
-    button3.grid(row=4, column=0, padx=10, sticky=W, )
+    button3.grid(row=4, column=0, padx=10 , sticky=W, )
+
+    button4 = Button(frame, text="Close", font=("Arial", 8, "bold"), command=close)
+    button4.grid(row=5, column=0, padx=10, pady=20, sticky=W, )
+
+    window.protocol("WM_DELETE_WINDOW", close)
 
 # Initiate GUI upon program launch
 window = Tk()

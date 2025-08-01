@@ -1,16 +1,17 @@
-import pickle
+import json
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 import tkinter as tk
 from tkinter import messagebox, ttk
-from Initialize import buffer_dict, order_days, delivery_days, order_for_days, today_day, au_holidays, model, encoder, scaler, imputer
+from setup import order_days, delivery_days, order_for_days, today_day, au_holidays, model, encoder, scaler, imputer
 
 def close_order_screen(frame, open_frame, open_frame2, window):
     open_frame.pack_forget()
     open_frame2.pack_forget()
     frame.grid(row=0, column=0, sticky="nsew")
     window.geometry('400x300')
+    window.title("Ordering System")
 
 def close(frame, open_frame):
     open_frame.grid_forget()
@@ -82,6 +83,8 @@ def get_inputs(window, frame, frame1):
 
 def run_calculations(df, unique_products, frame, window, frame1):
         # Predict usage
+        with open("buffer.txt", "r") as f:
+            buffer_dict = json.load(f)
         order_window_predictions = {item: 0.0 for item in unique_products}
         for day in get_inputs(window, frame, frame1):
             dow = day["date"].weekday()
