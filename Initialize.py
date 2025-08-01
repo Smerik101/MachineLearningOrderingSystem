@@ -6,7 +6,7 @@ from tkinter import messagebox
 import json
 
 ##Initialize Date Data
-au_holidays = holidays.country_holidays('AU', subdiv='ACT', years=2025)
+au_holidays = au = holidays.Australia(state='ACT', years=2025)
 
 #Initialize Todays Date
 today_date = date.today()#Change day for troubleshooting

@@ -27,7 +27,7 @@ def mainmenu():
     button2.grid(row = 3, column = 1, padx = 10, pady = 20,  sticky = W,)
 
     button3 = Button(frame, text="Setup", font=("Arial", 8, "bold"), command = setuprun)
-    button3.grid(row=4, column=0, padx=10, sticky=W, )
+    button3.grid(row=4, column=0, padx=10 , sticky=W, )
 
 # Initiate GUI upon program launch
 window = Tk()
