@@ -2,8 +2,10 @@ import pickle
 from datetime import timedelta, date
 import holidays
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 import json
+
+#### DATA TO BE INITIALIZED UPON PROGRAM OPEN####
 
 ##Initialize Date Data
 au_holidays = au = holidays.Australia(state='ACT', years=2025)
@@ -39,10 +41,6 @@ else:
 yesterday_date = yesterday_date.strftime("%d/%m/%Y")
 today_date = today_date.strftime("%d/%m/%Y")
 
-## Buffer Setup
-with open("data.txt", "r") as f:
-    buffer_dict = json.load(f)
-
 ## Order Delivery Setup
 order_days = (1, 5 ) #Days ordering is completed
 delivery_delay = 3 #Time for order to arrive
@@ -74,12 +72,68 @@ with open("scaler.pkl", "rb") as f:
     scaler = pickle.load(f)
 with open("imputer.pkl", "rb") as f:
     imputer = pickle.load(f)
-#with open("data.txt", "w") as f: ##FOR MODIFYING BUFFERS
-#    json.dump(buffer_dict, f)
+with open("buffer.txt", "r") as f:
+    buffer_dict = json.load(f)
 
-def close(frame, open_frame):
+#### DATA TO BE INITIALIZED UPON PROGRAM OPEN####
+
+
+def close(frame, open_frame, window):
     open_frame.grid_forget()
     frame.grid(row=0, column=0, sticky="nsew")
+    window.geometry('400x300')
+    window.title("Ordering System")
+
+def modify_buffer(frame, frame2, window):
+    frame2.grid_forget()
+    top_frame = tk.Frame(window)
+    top_frame.grid()
+
+    def refresh_tree():
+        for item in tree.get_children():
+            tree.delete(item)
+        for key, value in buffer_dict.items():
+            tree.insert("", "end", values=(key, value))
+
+    def add_or_update():
+        key = label_text.get()
+        value = int(value_entry.get())
+        if key:
+            buffer_dict[key] = value
+            refresh_tree()
+            with open("buffer.txt", "w") as f:
+                json.dump(buffer_dict, f)
+
+    def on_select(event):
+        selected = tree.selection()
+        if selected:
+            item = tree.item(selected[0])
+            key = item['values'][0]
+            value = item['values'][1]
+            label_text.set(key)
+            value_entry.delete(0, tk.END)
+            value_entry.insert(0, value)
+
+    label_text = tk.StringVar()
+    tree = ttk.Treeview(top_frame, columns=("Key", "Value"), show="headings")
+    tree.heading("Key", text="Key")
+    tree.heading("Value", text="Value")
+    tree.grid(row=0, column=0, columnspan=3)
+
+    tk.Label(top_frame, text="Key:").grid(row=1, column=0)
+    key_entry = tk.Label(top_frame, textvariable=label_text)
+    key_entry.grid(row=1, column=1)
+
+    tk.Label(top_frame, text="Value:").grid(row=2, column=0)
+    value_entry = tk.Entry(top_frame)
+    value_entry.grid(row=2, column=1)
+
+    # Buttons
+    tk.Button(top_frame, text="Update", command=add_or_update).grid(row=1, column=2)
+    tk.Button(top_frame, text="Done", command=lambda:close(frame, top_frame, window)).grid(row=2, column=2)
+    window.geometry("")
+    tree.bind("<<TreeviewSelect>>", on_select)
+    refresh_tree()
 
 def setup(frame1, frame, window):
     frame1.grid_forget()
@@ -87,11 +141,11 @@ def setup(frame1, frame, window):
     frame2.grid()
     Label1 = tk.Label(frame2, text="Setup", font=("Ariel", 10, "bold"))
     Label1.grid(row=1, column=1, padx=10, pady=10, columnspan=2, sticky=tk.W)
-    Button1 = tk.Button(frame2, text="Item Setup")
+    Button1 = tk.Button(frame2, text="Modify Buffers", command=lambda:modify_buffer(frame, frame2, window))
     Button1.grid(row=2, column=1, padx=10, pady=10, sticky=tk.W)
     Button2 = tk.Button(frame2, text="Order Timing Setup")
     Button2.grid(row=2, column=2, padx=10, pady=10, sticky=tk.W)
-    Button3 = tk.Button(frame2, text="Cancel", command=lambda: close(frame, frame2))
+    Button3 = tk.Button(frame2, text="Cancel", command=lambda: close(frame, frame2, window))
     Button3.grid(row=2, column=3, padx=10, pady=10, sticky=tk.W)
 
 
@@ -113,17 +167,8 @@ def open_setup(window, frame):
     password_entry = tk.Entry(frame1, validate="key", show="*")
     label2 = tk.Label(frame1, text="Password:", font=("Ariel", 10, "bold"))
     button1 = tk.Button(frame1, text="Enter", command = lambda:enter(frame1, frame, window, password_entry))
-    button2 = tk.Button(frame1, text="Cancel", command=lambda:close(frame, frame1))
+    button2 = tk.Button(frame1, text="Cancel", command=lambda:close(frame, frame1, window))
     password_entry.grid(row=2, column=1, padx=10, sticky=tk.W)
     label2.grid(row=1, column=1, padx=10, pady=10, sticky=tk.W)
     button1.grid(row=2, column=2, padx=10, pady=10, sticky=tk.W)
     button2.grid(row=2, column=3, padx=10, pady=10, sticky=tk.W)
-
-    """buffer_dict = {
-        "BUN REGULAR": 100,
-        "MUFFIN ENGLISH": 100,
-        "BUN 4 INCH": 80,
-        "BUN BIG MAC": 60,
-        "BUN MCCRISPY": 30,
-        "BUN GOURMET": 30,
-    }"""

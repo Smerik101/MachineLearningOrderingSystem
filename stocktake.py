@@ -1,18 +1,19 @@
 import pandas as pd
 import tkinter as tk
-from Initialize import yesterday_date, yesterday_day, yesterday_public_holiday, yesterday_is_weekend
+from setup import yesterday_date, yesterday_day, yesterday_public_holiday, yesterday_is_weekend
 from modeltraining import model_training
 from preprocessing import pre_processing
 
 # Return to the menu
-def close(frame, open_frame):
+def close(frame, open_frame, window):
     open_frame.grid_forget()
     frame.grid(row=0, column=0, sticky="nsew")
+    window.title("Ordering System")
 
-def delete_stocktake(df, frame, frame1):
+def delete_stocktake(df, frame, frame1, window):
     filtered_df = df[df["Date"] != yesterday_date]
     filtered_df.to_csv("TrainingSetNew.csv", index=False)
-    close(frame, frame1)
+    close(frame, frame1, window)
 
 # Checks to ensure stock count isn't being done twice in a day
 def check_date(df):
@@ -35,7 +36,7 @@ def enter(button_pressed):
 def exception(char):
     return char.isdigit()
 
-def enter_input(frame2, item_name, frame):
+def enter_input(frame2, item_name, frame, window):
     button_pressed = tk.BooleanVar(value=False)
     validation = frame2.register(exception)
     entry = tk.Entry(frame2, validate="key", validatecommand=(validation, "%S"))
@@ -44,7 +45,7 @@ def enter_input(frame2, item_name, frame):
     label.grid(row=1, column=1, columnspan=2, padx= 10, pady=10)
     button = tk.Button(frame2, text="Next", command=lambda:enter(button_pressed))
     button.grid(row=2, column=2, padx=10,)
-    button2 = tk.Button(frame2, text="Cancel", command=lambda: close(frame, frame2))
+    button2 = tk.Button(frame2, text="Cancel", command=lambda: close(frame, frame2, window))
     button2.grid(row=2, column=3, padx=10, )
     frame2.wait_variable(button_pressed)
     try:
@@ -63,7 +64,7 @@ def check_sales(df, sales_entry1, frame1, window, frame):
         frame3.grid()
         label1 = tk.Label(frame3, text="Invalid Sales Entry.", font=("Arial", 10))
         label1.grid(row=1, column=1, padx=10, pady=10, sticky=tk.W)
-        button1 = tk.Button(frame3, text="Back", font=("Arial", 10, "bold"), command=lambda: close(frame, frame3))
+        button1 = tk.Button(frame3, text="Back", font=("Arial", 10, "bold"), command=lambda: close(frame, frame3, window))
         button1.grid(row=2, column=1, padx=10, pady=10, sticky=tk.W)
 
 # Run stocktake
@@ -101,7 +102,7 @@ def stocktake(df, sales_entry, frame1, window, frame):
         else:
             open_stock = 0
 
-        current_stock = enter_input(frame2, item_name, frame)
+        current_stock = enter_input(frame2, item_name, frame, window)
         usage = int(open_stock) - current_stock
         data_frame.loc[currentItem, "Item Name"] = str(item_name)
         data_frame.loc[currentItem, "Usage"] = usage
@@ -117,7 +118,7 @@ def stocktake(df, sales_entry, frame1, window, frame):
     frame3.grid()
     label = tk.Label(frame3, text="Stock Count Complete")
     label.grid(row=1, column=1, padx=10, pady=10)
-    button = tk.Button(frame3, text="Back", command=lambda: close(frame, frame3))
+    button = tk.Button(frame3, text="Back", command=lambda: close(frame, frame3, window))
     button.grid(row=2, column=1, padx=10, pady=10)
 
 # Initiate GUI
@@ -136,9 +137,9 @@ def open_stocktake(window, frame):
     if repeated_date:
         label1 = tk.Label(frame1, text="Stocktake already completed today.", font=("Arial", 10))
         label1.grid(row=1, column=1, padx=10, pady=10, sticky=tk.W, columnspan=2)
-        button1 = tk.Button(frame1, text="Back", font=("Arial", 10, "bold"), command=lambda: close(frame, frame1))
+        button1 = tk.Button(frame1, text="Back", font=("Arial", 10, "bold"), command=lambda: close(frame, frame1, window))
         button1.grid(row=2, column=1, padx=10, pady=10, sticky=tk.W)
-        button2 = tk.Button(frame1, text="Delete Last Stocktake", font=("Arial", 10, "bold"),command=lambda:delete_stocktake(df, frame, frame1))
+        button2 = tk.Button(frame1, text="Delete Last Stocktake", font=("Arial", 10, "bold"),command=lambda:delete_stocktake(df, frame, frame1, window))
         button2.grid(row=2, column=2, padx=10, pady=10, sticky=tk.W)
 
     else:
@@ -146,7 +147,7 @@ def open_stocktake(window, frame):
         sales_entry1 = tk.Entry(frame1,  validate="key", validatecommand=(validation, "%S"))
         label2 = tk.Label(frame1, text="Day Sales:", font=("Ariel", 10, "bold"))
         button1 = tk.Button(frame1, text="Enter", command=lambda:check_sales(df, sales_entry1, frame1, window, frame))
-        button2 = tk.Button(frame1, text="Cancel", command=lambda:close(frame, frame1))
+        button2 = tk.Button(frame1, text="Cancel", command=lambda:close(frame, frame1, window))
         sales_entry1.grid(row=2, column=1, padx=10, sticky=tk.W)
         label2.grid(row=1, column=1, padx=10, pady=10, sticky=tk.W)
         button1.grid(row=2, column=2, padx=10, pady=10, sticky=tk.W)
