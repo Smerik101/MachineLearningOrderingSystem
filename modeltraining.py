@@ -1,8 +1,9 @@
-import pickle
+import joblib
 import numpy as np
 from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
+
 
 def model_training():
     #Load preprocessed data
@@ -36,5 +37,5 @@ def model_training():
     print("Full data shape:", X.shape)
 
     #Save model
-    with open("linear_model.pkl", "wb") as f:
-        pickle.dump(model, f)
+    with open("linear_model.joblib", "wb") as f:
+        joblib.dump(model, f)
