@@ -4,6 +4,7 @@ import holidays
 import tkinter as tk
 from tkinter import messagebox, ttk
 import json
+import joblib
 
 #### DATA TO BE INITIALIZED UPON PROGRAM OPEN####
 
@@ -11,8 +12,10 @@ import json
 au_holidays = au = holidays.Australia(state='ACT', years=2025)
 
 #Initialize Todays Date
-today_date = date.today()#Change day for troubleshooting
+today_date = date.today() 
+#today_date -= timedelta(days=1) #LINE FOR TROUBLESHOOTING
 today_day = today_date.weekday()
+print(today_day)
 
 if today_date.weekday() == 6 or today_date.weekday() == 5:
     is_weekend = 1
@@ -42,7 +45,7 @@ yesterday_date = yesterday_date.strftime("%d/%m/%Y")
 today_date = today_date.strftime("%d/%m/%Y")
 
 ## Order Delivery Setup
-order_days = (1, 5 ) #Days ordering is completed
+order_days = (1, 5) #Days ordering is completed
 delivery_delay = 3 #Time for order to arrive
 
 delivery_days = []
@@ -64,8 +67,8 @@ for i in range(len(delivery_days)):
             x = x-7
     order_for_days.append(y)
 
-with open("linear_model.pkl", "rb") as f:
-    model = pickle.load(f)
+with open("linear_model.joblib", "rb") as f:
+    model = joblib.load(f)
 with open("encoder.pkl", "rb") as f:
     encoder = pickle.load(f)
 with open("scaler.pkl", "rb") as f:
