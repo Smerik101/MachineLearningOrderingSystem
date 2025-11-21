@@ -8,14 +8,13 @@ import joblib
 
 #### DATA TO BE INITIALIZED UPON PROGRAM OPEN####
 
-##Initialize Date Data
+# Initialize Date Data
 au_holidays = au = holidays.Australia(state='ACT', years=2025)
 
-#Initialize Todays Date
-today_date = date.today() 
-#today_date -= timedelta(days=1) #LINE FOR TROUBLESHOOTING
+# Initialize Todays Date
+today_date = date.today()
+# today_date -= timedelta(days=1) #LINE FOR TROUBLESHOOTING
 today_day = today_date.weekday()
-print(today_day)
 
 if today_date.weekday() == 6 or today_date.weekday() == 5:
     is_weekend = 1
@@ -27,7 +26,7 @@ if today_date in au_holidays:
 else:
     public_holiday = 0
 
-#Initialize Yesterdays Date
+# Initialize Yesterdays Date
 yesterday_date = today_date - timedelta(days=1)
 yesterday_day = yesterday_date.weekday()
 
@@ -44,9 +43,9 @@ else:
 yesterday_date = yesterday_date.strftime("%d/%m/%Y")
 today_date = today_date.strftime("%d/%m/%Y")
 
-## Order Delivery Setup
-order_days = (1, 5) #Days ordering is completed
-delivery_delay = 3 #Time for order to arrive
+# Order Delivery Setup
+order_days = (1, 5)  # Days ordering is completed
+delivery_delay = 3  # Time for order to arrive
 
 delivery_days = []
 for i in range(len(order_days)):
@@ -86,6 +85,7 @@ def close(frame, open_frame, window):
     frame.grid(row=0, column=0, sticky="nsew")
     window.geometry('400x300')
     window.title("Ordering System")
+
 
 def modify_buffer(frame, frame2, window):
     frame2.grid_forget()
@@ -132,11 +132,14 @@ def modify_buffer(frame, frame2, window):
     value_entry.grid(row=2, column=1)
 
     # Buttons
-    tk.Button(top_frame, text="Update", command=add_or_update).grid(row=1, column=2)
-    tk.Button(top_frame, text="Done", command=lambda:close(frame, top_frame, window)).grid(row=2, column=2)
+    tk.Button(top_frame, text="Update",
+              command=add_or_update).grid(row=1, column=2)
+    tk.Button(top_frame, text="Done", command=lambda: close(
+        frame, top_frame, window)).grid(row=2, column=2)
     window.geometry("")
     tree.bind("<<TreeviewSelect>>", on_select)
     refresh_tree()
+
 
 def setup(frame1, frame, window):
     frame1.grid_forget()
@@ -144,11 +147,13 @@ def setup(frame1, frame, window):
     frame2.grid()
     Label1 = tk.Label(frame2, text="Setup", font=("Ariel", 10, "bold"))
     Label1.grid(row=1, column=1, padx=10, pady=10, columnspan=2, sticky=tk.W)
-    Button1 = tk.Button(frame2, text="Modify Buffers", command=lambda:modify_buffer(frame, frame2, window))
+    Button1 = tk.Button(frame2, text="Modify Buffers",
+                        command=lambda: modify_buffer(frame, frame2, window))
     Button1.grid(row=2, column=1, padx=10, pady=10, sticky=tk.W)
     Button2 = tk.Button(frame2, text="Order Timing Setup")
     Button2.grid(row=2, column=2, padx=10, pady=10, sticky=tk.W)
-    Button3 = tk.Button(frame2, text="Cancel", command=lambda: close(frame, frame2, window))
+    Button3 = tk.Button(frame2, text="Cancel",
+                        command=lambda: close(frame, frame2, window))
     Button3.grid(row=2, column=3, padx=10, pady=10, sticky=tk.W)
 
 
@@ -161,6 +166,7 @@ def enter(frame1, frame, window, password_entry):
     else:
         messagebox.showinfo("Password Entry", "Incorrect Password")
 
+
 def open_setup(window, frame):
     frame.grid_forget()
     window.title("Setup")
@@ -169,8 +175,10 @@ def open_setup(window, frame):
 
     password_entry = tk.Entry(frame1, validate="key", show="*")
     label2 = tk.Label(frame1, text="Password:", font=("Ariel", 10, "bold"))
-    button1 = tk.Button(frame1, text="Enter", command = lambda:enter(frame1, frame, window, password_entry))
-    button2 = tk.Button(frame1, text="Cancel", command=lambda:close(frame, frame1, window))
+    button1 = tk.Button(frame1, text="Enter", command=lambda: enter(
+        frame1, frame, window, password_entry))
+    button2 = tk.Button(frame1, text="Cancel",
+                        command=lambda: close(frame, frame1, window))
     password_entry.grid(row=2, column=1, padx=10, sticky=tk.W)
     label2.grid(row=1, column=1, padx=10, pady=10, sticky=tk.W)
     button1.grid(row=2, column=2, padx=10, pady=10, sticky=tk.W)
