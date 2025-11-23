@@ -15,7 +15,7 @@ def close(frame, open_frame, window):
 
 def delete_stocktake(df, frame, frame1, window):
     filtered_df = df[df["Date"] != yesterday_date]
-    filtered_df.to_csv("TrainingSetNew.csv", index=False)
+    filtered_df.to_csv("training.csv", index=False)
     close(frame, frame1, window)
 
 # Checks to ensure stock count isn't being done twice in a day
@@ -29,7 +29,7 @@ def check_date(df):
 
 
 def dataset():
-    df = pd.read_csv("TrainingSetNew.csv")
+    df = pd.read_csv("training.csv")
     df.to_csv("backup.csv", index=False)
     df["Date"].head()
     df = df[df["Date"].notnull()]
@@ -128,7 +128,7 @@ def stocktake(df, sales_entry, frame1, window, frame):
         data_frame.loc[currentItem, "End Stock"] = current_stock
         currentItem += 1
 
-    data_frame.to_csv("TrainingSetNew.csv", mode="a",
+    data_frame.to_csv("training.csv", mode="a",
                       header=False, index=False)
     pre_processing()
     model_training()

@@ -166,7 +166,7 @@ def run_calculations(df, unique_products, frame, window, frame1):
 
 def open_ordering(window, frame):
     frame.grid_forget()
-    df = pd.read_csv("TrainingSetNew.csv")
+    df = pd.read_csv("training.csv")
     df["Item Name"] = df["Item Name"].str.strip()
     df["Date"] = pd.to_datetime(df["Date"], format="%d/%m/%Y", errors="coerce")
     unique_products = df["Item Name"].dropna().unique()

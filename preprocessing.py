@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 
 def pre_processing():
     # Load dataset
-    df = pd.read_csv("TrainingSetNew.csv")
+    df = pd.read_csv("training.csv")
     df["Date"] = pd.to_datetime(df["Date"], dayfirst=True, errors='coerce')
 
     # Remove rows with invalid or missing date

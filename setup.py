@@ -135,7 +135,7 @@ def modify_buffer(frame, frame2, window):
     tk.Button(top_frame, text="Update",
               command=add_or_update).grid(row=1, column=2)
     tk.Button(top_frame, text="Done", command=lambda: close(
-        frame, top_frame, window)).grid(row=2, column=2)
+        frame2, top_frame, window)).grid(row=2, column=2)
     window.geometry("")
     tree.bind("<<TreeviewSelect>>", on_select)
     refresh_tree()
