@@ -150,7 +150,7 @@ def setup(frame1, frame, window):
     Button1 = tk.Button(frame2, text="Modify Buffers",
                         command=lambda: modify_buffer(frame, frame2, window))
     Button1.grid(row=2, column=1, padx=10, pady=10, sticky=tk.W)
-    Button2 = tk.Button(frame2, text="Order Timing Setup")
+    Button2 = tk.Button(frame2, text="Order Timing Setup (WIP)")
     Button2.grid(row=2, column=2, padx=10, pady=10, sticky=tk.W)
     Button3 = tk.Button(frame2, text="Cancel",
                         command=lambda: close(frame, frame2, window))
