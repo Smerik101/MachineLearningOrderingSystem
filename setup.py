@@ -9,7 +9,7 @@ import joblib
 #### DATA TO BE INITIALIZED UPON PROGRAM OPEN####
 
 # Initialize Date Data
-au_holidays = au = holidays.Australia(state='ACT', years=2025)
+au_holidays = holidays.Australia(state='ACT', years=2025)
 
 # Initialize Todays Date
 today_date = date.today()
