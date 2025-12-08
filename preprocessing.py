@@ -52,3 +52,6 @@ def pre_processing():
         pickle.dump(scaler, f)
     with open("imputer.pkl", "wb") as f:
         pickle.dump(imputer, f)
+
+
+pre_processing()

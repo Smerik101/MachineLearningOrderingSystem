@@ -1,7 +1,7 @@
 import pandas as pd
 
 # === CONFIG ===
-csv_file = "TrainingSetNew.csv"
+csv_file = "training.csv"
 date_column = "Date"
 
 # === INPUT ===

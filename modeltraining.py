@@ -40,3 +40,6 @@ def model_training():
     # Save model
     with open("linear_model.joblib", "wb") as f:
         joblib.dump(model, f)
+
+
+model_training()
