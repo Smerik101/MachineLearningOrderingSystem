@@ -1,30 +1,20 @@
 import pandas as pd
-from setup import yesterday_date, yesterday_day, yesterday_public_holiday, yesterday_is_weekend
 from modeltraining import model_training
 from preprocessing import pre_processing
 
 
 # Delete last stocktake
-def delete_stocktake(df):
-    filtered_df = df[df["Date"] != yesterday_date]
+def delete_stocktake(state):
+    filtered_df = state.df[state.df["Date"] != state.yesterday_date]
     filtered_df.to_csv("training.csv", index=False)
 
 
 # Checks to ensure stock count isn't being done twice in a day
-def check_date(df):
-    if yesterday_date in df["Date"].values:
+def check_date(state):
+    if state.yesterday_date in state.df["Date"].values:
         return True
     else:
         return False
-
-
-# Initialize dataset
-def dataset():
-    df = pd.read_csv("training.csv")
-    df.to_csv("backup.csv", index=False)
-    df["Date"].head()
-    df = df[df["Date"].notnull()]
-    return df
 
 
 # Take User Input
@@ -48,29 +38,29 @@ def check_sales():
 
 
 # Run stocktake
-def stocktake(df, sales):
+def stocktake(state, sales):
 
     is_school_holiday = 0  # IMPLEMENT APK FOR AUTOFILL. 0 BY DEFAULT
 
     # Get unique product names
-    unique_products = df["Item Name"].dropna().unique()
+    unique_products = state.df["Item Name"].dropna().unique()
     product_mapping = {i: name for i, name in enumerate(unique_products)}
     item_amount = len(product_mapping)
 
     data_frame = pd.DataFrame(None, index=range(item_amount), columns=[
                               "Date", "Item Name", "Sales", "DayOfWeek", "IsWeekend", "IsPublicHoliday", "IsSchoolHoliday", "Usage", "End Stock"])
-    data_frame['Date'] = yesterday_date
+    data_frame['Date'] = state.yesterday_date
     data_frame["Sales"] = sales
-    data_frame["DayOfWeek"] = yesterday_day
-    data_frame["IsWeekend"] = yesterday_is_weekend
-    data_frame["IsPublicHoliday"] = yesterday_public_holiday
+    data_frame["DayOfWeek"] = state.yesterday_day
+    data_frame["IsWeekend"] = state.yesterday_is_weekend
+    data_frame["IsPublicHoliday"] = state.yesterday_is_public_holiday
     data_frame["IsSchoolHoliday"] = is_school_holiday
 
     # Iterate through items
     currentItem = 0
     while currentItem < item_amount:
         item_name = product_mapping[currentItem]
-        product_rows = df[df["Item Name"] == item_name]
+        product_rows = state.df[state.df["Item Name"] == item_name]
 
         # Get last known End Stock as openStock
         if not product_rows.empty:
@@ -88,20 +78,21 @@ def stocktake(df, sales):
 
     data_frame.to_csv("training.csv", mode="a",
                       header=False, index=False)
-    pre_processing()
-    model_training()
+
+    state.df = state.get_dataset()
+    pre_processing(state)
+    state.get_encoders()
+    state.get_preprocessed_data()
+    model_training(state)
+    state.get_model()
 
 
-def open_stocktake():
-    df = dataset()
-    repeated_date = check_date(df)
+def open_stocktake(state):
+    repeated_date = check_date(state)
+
     # Continue if stock count not completed for the day
-
     if repeated_date:
         print("Stocktake already completed today.")
     else:
         sales = check_sales()
-        stocktake(df, sales)
-
-
-open_stocktake()
+        stocktake(state, sales)

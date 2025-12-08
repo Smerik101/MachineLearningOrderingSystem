@@ -5,9 +5,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 
 
-def model_training():
+def model_training(state):
     # Load preprocessed data
-    data = np.load('preprocessed_data.npz')
+    data = state.model_data
     X = data['X']
     y = data['y']
 
@@ -40,6 +40,3 @@ def model_training():
     # Save model
     with open("linear_model.joblib", "wb") as f:
         joblib.dump(model, f)
-
-
-model_training()

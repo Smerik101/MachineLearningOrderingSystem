@@ -2,7 +2,7 @@ import json
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
-from setup import order_days, delivery_days, order_for_days, today_day, au_holidays, model, encoder, scaler, imputer
+from appstate import au_holidays
 
 
 # Convert int to day of week
@@ -12,10 +12,10 @@ def weekday_from_int(x):
 
 
 # Check if current day is ordering day
-def check_day():
-    index = order_days.index(today_day)
-    start_day = delivery_days[index]
-    order_days_amount = order_for_days[index]
+def check_day(state):
+    index = state.order_days.index(state.today_day)
+    start_day = state.delivery_days[index]
+    order_days_amount = state.order_for_days[index]
     return start_day, order_days_amount
 
 
@@ -31,8 +31,8 @@ def enter_input(day_name):
 
 
 # Get user input for day projections and parameters.
-def get_inputs():
-    start_day, order_days_amount = check_day()
+def get_inputs(state):
+    start_day, order_days_amount = check_day(state)
     day_inputs = []
 
     for i in range(0, order_days_amount):
@@ -53,25 +53,25 @@ def get_inputs():
     return day_inputs
 
 
-def run_calculations(df, unique_products):
+def run_calculations(state, df, unique_products):
     # Predict usage
     with open("buffer.txt", "r") as f:
         buffer_dict = json.load(f)
     order_window_predictions = {item: 0.0 for item in unique_products}
-    for day in get_inputs():
+    for day in get_inputs(state):
         dow = day["date"].weekday()
         month = day["date"].month
         is_weekend = int(dow in [5, 6])
 
         for item in unique_products:
-            categorical = encoder.transform(
+            categorical = state.encoder.transform(
                 pd.DataFrame([[item]], columns=["Item Name"]))
             numeric = np.array(
                 [[day["sales"], dow, month, is_weekend, day["school_holiday"], day["public_holiday"]]])
             combined = np.hstack((numeric, categorical))
-            combined_imputed = imputer.transform(combined)
-            combined_scaled = scaler.transform(combined_imputed)
-            usage_pred = max(0, model.predict(combined_scaled)[0])
+            combined_imputed = state.imputer.transform(combined)
+            combined_scaled = state.scaler.transform(combined_imputed)
+            usage_pred = max(0, state.model.predict(combined_scaled)[0])
             order_window_predictions[item] += usage_pred
 
     # Fetch leftover stock (last end stock from last count)
@@ -100,16 +100,12 @@ def run_calculations(df, unique_products):
     print(order)
 
 
-def open_ordering():
-    df = pd.read_csv("training.csv")
-    df["Item Name"] = df["Item Name"].str.strip()
+def open_ordering(state):
+    df = state.df
     df["Date"] = pd.to_datetime(df["Date"], format="%d/%m/%Y", errors="coerce")
     unique_products = df["Item Name"].dropna().unique()
 
-    if today_day in order_days:
-        run_calculations(df, unique_products)
+    if state.today_day in state.order_days:
+        run_calculations(state, df, unique_products)
     else:
         print("Ordering must be done on ordering days")
-
-
-open_ordering()
