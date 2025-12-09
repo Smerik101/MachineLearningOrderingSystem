@@ -52,18 +52,19 @@ def get_inputs(state):
         })
     return day_inputs
 
-
-def run_calculations(state, df, unique_products):
     # Predict usage
-    with open("buffer.txt", "r") as f:
-        buffer_dict = json.load(f)
-    order_window_predictions = {item: 0.0 for item in unique_products}
+
+
+def run_calculations(state, df):
+    order_window_predictions = {item: 0.0 for item in state.unique_products}
     for day in get_inputs(state):
         dow = day["date"].weekday()
         month = day["date"].month
         is_weekend = int(dow in [5, 6])
+        state.get_encoders()
+        state.get_model()
 
-        for item in unique_products:
+        for item in state.unique_products:
             categorical = state.encoder.transform(
                 pd.DataFrame([[item]], columns=["Item Name"]))
             numeric = np.array(
@@ -76,7 +77,7 @@ def run_calculations(state, df, unique_products):
 
     # Fetch leftover stock (last end stock from last count)
     latest_stock = {}
-    for item in unique_products:
+    for item in state.unique_products:
         product_data = df[df["Item Name"] == item]
         if not product_data.empty:
             last_row = product_data.sort_values("Date").iloc[-1]
@@ -88,10 +89,10 @@ def run_calculations(state, df, unique_products):
         columns=["Item", "Buffer", "Current Qty", "Projected Usage", "Proposed Order Qty"])
 
     # Calculate order using buffers and leftover stock
-    for item in unique_products:
+    for item in state.unique_products:
         predicted_usage = order_window_predictions[item]
         current_stock = latest_stock[item]
-        buffer = buffer_dict.get(item, 0)
+        buffer = state.buffer_dict.get(item, 0)
         order_qty = max(0, round(predicted_usage + buffer - current_stock))
         new_row = {"Item": item, "Buffer": buffer, "Current Qty": current_stock,
                    "Projected Usage": round(predicted_usage), "Proposed Order Qty": order_qty}
@@ -103,9 +104,8 @@ def run_calculations(state, df, unique_products):
 def open_ordering(state):
     df = state.df
     df["Date"] = pd.to_datetime(df["Date"], format="%d/%m/%Y", errors="coerce")
-    unique_products = df["Item Name"].dropna().unique()
 
     if state.today_day in state.order_days:
-        run_calculations(state, df, unique_products)
+        run_calculations(state, df)
     else:
         print("Ordering must be done on ordering days")

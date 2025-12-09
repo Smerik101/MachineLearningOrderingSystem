@@ -8,6 +8,7 @@ state = AppState()
 
 
 def main(state):
+
     while True:
         entry = int(
             input("Please select action (0=quit, 1=stocktake, 2=ordering)"))
@@ -17,8 +18,9 @@ def main(state):
             open_stocktake(state)
         if entry == 2:
             open_ordering(state)
+        if entry == 3:
+            setup_config(state)
         else:
             print("Invalid entry, try again")
-
 
 main(state)

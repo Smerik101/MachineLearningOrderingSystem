@@ -13,33 +13,42 @@ au_holidays = holidays.Australia(state='ACT', years=2025)
 class AppState:
 
     def __init__(self):
-        self.df = self.get_dataset()
-        self.today_date = date.today()
-        self.today_day = self.today_date.weekday()
-        self.is_weekend = self._is_weekend()
-        self.is_public_holiday = self._is_public_holiday()
-        self.yesterday_date = self.today_date - timedelta(days=1)
-        self.yesterday_day = self.yesterday_date.weekday()
-        self.yesterday_is_weekend = self._yesterday_is_weekend()
-        self.yesterday_is_public_holiday = self._yesterday_is_public_holiday()
+        self.df = self.get_dataset() #Get and store dataset
+        self.today_date = date.today() + timedelta(days=1)#Get and store todays date
+        self.today_day = self.today_date.weekday() #Get and store todays weekday (int)
+        self.is_weekend = self._is_weekend() #Get and store weekend (bool)
+        self.is_public_holiday = self._is_public_holiday() #Get and store public holiday (bool)
+        self.yesterday_date = self.today_date - timedelta(days=1) #Get and store yesterdays date
+        self.yesterday_day = self.yesterday_date.weekday() #Get and store yesterdays weekday (int)
+        self.yesterday_is_weekend = self._yesterday_is_weekend() #Get and store yesterday weekend (bool)
+        self.yesterday_is_public_holiday = self._yesterday_is_public_holiday() #Get and store yesterday public holiday (bool)
+        self.get_config()
 
-        self.order_days = (1, 5)  # Days ordering is completed
-        self.delivery_delay = 3  # Time for order to arrive
+    #Read config file
+    def get_config(self):
+        with open("config.json", "r") as f:
+            config_dict = json.load(f)
+            self.buffer_dict = config_dict["unique_items"]
+            self.order_days = tuple(config_dict["order_days"])
+            self.delivery_delay = config_dict["delivery_delay"]
+            self.unique_products = []
+            for key in config_dict["unique_items"]:
+                self.unique_products.append(key)
+            self.unique_products = sorted(
+                self.unique_products, key=lambda x: x[0])
 
-        self.delivery_days = self._delivery_days()
-        self.order_for_days = self._order_for_days()
 
-        self.yesterday_date = self.yesterday_date.strftime("%d/%m/%Y")
-        self.today_date = self.today_date.strftime("%d/%m/%Y")
+        self.delivery_days = self._delivery_days() #Calculate delivery days
+        self.order_for_days = self._order_for_days() #Calculate days within ordering period
+        self.yesterday_date = self.yesterday_date.strftime("%d/%m/%Y") #Convert date format
+        self.today_date = self.today_date.strftime("%d/%m/%Y") #Convert date format
 
-    def get_buffer(self):
-        with open("buffer.txt", "r") as f:
-            self.buffer_dict = json.load(f)
-
+    #Read/update ML model
     def get_model(self):
         with open("linear_model.joblib", "rb") as f:
             self.model = joblib.load(f)
 
+    #Read/update encoders from preprocessing
     def get_encoders(self):
         with open("encoder.pkl", "rb") as f:
             self.encoder = pickle.load(f)
@@ -48,15 +57,20 @@ class AppState:
         with open("imputer.pkl", "rb") as f:
             self.imputer = pickle.load(f)
 
+    #Read/update preprocessed data
     def get_preprocessed_data(self):
         self.model_data = np.load('preprocessed_data.npz')
 
+    #Read/update dataset
     def get_dataset(self):
         df = pd.read_csv("training.csv")
-        df.to_csv("backup.csv", index=False)
         df = df[df["Date"].notnull()]
         df["Item Name"] = df["Item Name"].str.strip()
         return df
+    
+    def backup_csv(self):
+        self.df.to_csv("backup.csv", index=False)
+        print("CSV copy updated")
 
     def _is_weekend(self):
         if self.today_day == 6 or self.today_day == 5:

@@ -43,8 +43,7 @@ def stocktake(state, sales):
     is_school_holiday = 0  # IMPLEMENT APK FOR AUTOFILL. 0 BY DEFAULT
 
     # Get unique product names
-    unique_products = state.df["Item Name"].dropna().unique()
-    product_mapping = {i: name for i, name in enumerate(unique_products)}
+    product_mapping = {i: name for i, name in enumerate(state.unique_products)}
     item_amount = len(product_mapping)
 
     data_frame = pd.DataFrame(None, index=range(item_amount), columns=[
@@ -76,6 +75,8 @@ def stocktake(state, sales):
         data_frame.loc[currentItem, "End Stock"] = current_stock
         currentItem += 1
 
+
+    state.backup_csv()
     data_frame.to_csv("training.csv", mode="a",
                       header=False, index=False)
 
