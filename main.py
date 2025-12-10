@@ -2,10 +2,10 @@ from stocktake import open_stocktake
 from ordering import open_ordering
 from appstate import AppState
 import sys
-
+from preprocessing import pre_processing
+from modeltraining import model_training
 
 state = AppState()
-
 
 def main(state):
 
@@ -18,9 +18,9 @@ def main(state):
             open_stocktake(state)
         if entry == 2:
             open_ordering(state)
-        if entry == 3:
-            setup_config(state)
         else:
             print("Invalid entry, try again")
 
+pre_processing(state)
+model_training()
 main(state)

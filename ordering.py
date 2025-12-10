@@ -1,4 +1,5 @@
-import json
+import pickle
+import joblib
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
@@ -52,27 +53,48 @@ def get_inputs(state):
         })
     return day_inputs
 
-    # Predict usage
+
+def get_data():
+    with open("linear_model.joblib", "rb") as f:
+        model = joblib.load(f)
+    with open("encoder.pkl", "rb") as f:
+        encoder = pickle.load(f)
+    with open("scaler.pkl", "rb") as f:
+        scaler = pickle.load(f)
+    with open("imputer.pkl", "rb") as f:
+        imputer = pickle.load(f)
+    return model, encoder, scaler, imputer
 
 
+def get_array(state, day, dow, month, is_weekend):
+
+    numeric = np.array([[day["sales"], dow, month]])
+    if state.feature_pref["use_weekend"] == True:
+        numeric = np.concatenate((numeric, [[is_weekend]]), axis=1)
+    if state.feature_pref["use_school_holiday"] == True:
+        numeric =  np.concatenate((numeric, [[day["school_holiday"]]]), axis=1)
+    if state.feature_pref["use_public_holiday"] == True:
+        numeric = np.concatenate((numeric, [[day["public_holiday"]]]), axis=1)
+    return numeric
+
+
+# Predict usage
 def run_calculations(state, df):
     order_window_predictions = {item: 0.0 for item in state.unique_products}
     for day in get_inputs(state):
         dow = day["date"].weekday()
         month = day["date"].month
         is_weekend = int(dow in [5, 6])
-        state.get_encoders()
-        state.get_model()
+        model, encoder, scaler, imputer = get_data()
 
         for item in state.unique_products:
-            categorical = state.encoder.transform(
+            categorical = encoder.transform(
                 pd.DataFrame([[item]], columns=["Item Name"]))
-            numeric = np.array(
-                [[day["sales"], dow, month, is_weekend, day["school_holiday"], day["public_holiday"]]])
+            numeric = get_array(state, day, dow, month, is_weekend)
             combined = np.hstack((numeric, categorical))
-            combined_imputed = state.imputer.transform(combined)
-            combined_scaled = state.scaler.transform(combined_imputed)
-            usage_pred = max(0, state.model.predict(combined_scaled)[0])
+            combined_imputed = imputer.transform(combined)
+            combined_scaled = scaler.transform(combined_imputed)
+            usage_pred = max(0, model.predict(combined_scaled)[0])
             order_window_predictions[item] += usage_pred
 
     # Fetch leftover stock (last end stock from last count)

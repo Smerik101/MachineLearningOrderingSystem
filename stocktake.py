@@ -3,18 +3,18 @@ from modeltraining import model_training
 from preprocessing import pre_processing
 
 
-# Delete last stocktake
+# Delete last stocktake (Currently Unused)
 def delete_stocktake(state):
     filtered_df = state.df[state.df["Date"] != state.yesterday_date]
     filtered_df.to_csv("training.csv", index=False)
+    state.current_state["current_stocktake"] = state.current_state["buffer_stocktake"]
 
 
 # Checks to ensure stock count isn't being done twice in a day
 def check_date(state):
-    if state.yesterday_date in state.df["Date"].values:
-        return True
-    else:
-        return False
+   if state.today_date == state.current_state["current_stocktake"]:
+       return True
+   return False
 
 
 # Take User Input
@@ -28,13 +28,23 @@ def enter_input(item_name):
 
 
 # Checks users sales input
-def check_sales():
+def get_sales():
     while True:
         try:
             sales = int(input(f"Enter day sales:"))
             return sales
         except ValueError:
             print("Invalid Entry. Try again")
+
+
+#Update state object
+def update_state(state):
+    state.df = state.get_dataset()
+    pre_processing(state)
+    model_training()
+    state.current_state["buffer_stocktake"] = state.current_state["current_stocktake"]
+    state.current_state["current_stocktake"] = state.today_date
+    state.write_state()
 
 
 # Run stocktake
@@ -75,17 +85,11 @@ def stocktake(state, sales):
         data_frame.loc[currentItem, "End Stock"] = current_stock
         currentItem += 1
 
-
+    #Append results and update state
     state.backup_csv()
     data_frame.to_csv("training.csv", mode="a",
                       header=False, index=False)
-
-    state.df = state.get_dataset()
-    pre_processing(state)
-    state.get_encoders()
-    state.get_preprocessed_data()
-    model_training(state)
-    state.get_model()
+    update_state(state)
 
 
 def open_stocktake(state):
@@ -95,5 +99,5 @@ def open_stocktake(state):
     if repeated_date:
         print("Stocktake already completed today.")
     else:
-        sales = check_sales()
+        sales = get_sales()
         stocktake(state, sales)
