@@ -5,9 +5,10 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 
 
-def pre_processing():
+def pre_processing(state):
+    
     # Load dataset
-    df = pd.read_csv("training.csv")
+    df = state.df
     df["Date"] = pd.to_datetime(df["Date"], dayfirst=True, errors='coerce')
 
     # Remove rows with invalid or missing date
@@ -26,6 +27,13 @@ def pre_processing():
     # Define numeric features
     numeric_features = ["Sales", "DayOfWeek", "Month",
                         "IsWeekend", "isSchoolHoliday", "isPublicHoliday"]
+    
+    if state.feature_pref["use_weekend"] == False:
+        numeric_features.remove("IsWeekend")
+    if state.feature_pref["use_public_holiday"] == False:
+        numeric_features.remove("isPublicHoliday")
+    if state.feature_pref["use_school_holiday"] == False:
+        numeric_features.remove("isSchoolHoliday")
 
     # One-hot encode the item name
     encoder = OneHotEncoder(handle_unknown="ignore", sparse_output=False)
@@ -52,3 +60,4 @@ def pre_processing():
         pickle.dump(scaler, f)
     with open("imputer.pkl", "wb") as f:
         pickle.dump(imputer, f)
+

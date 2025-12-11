@@ -6,6 +6,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 
 
 def model_training():
+    
     # Load preprocessed data
     data = np.load('preprocessed_data.npz')
     X = data['X']

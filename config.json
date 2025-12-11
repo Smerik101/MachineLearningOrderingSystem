@@ -1,0 +1,20 @@
+{
+    "unique_items": {
+        "BUN REGULAR": 100,
+        "MUFFIN ENGLISH": 110,
+        "BUN 4 INCH": 90,
+        "BUN BIG MAC": 60,
+        "BUN MCCRISPY": 30,
+        "BUN GOURMET": 30
+    },
+    "order_days": [
+        1,
+        5
+    ],
+    "delivery_delay": 3,
+    "feature_pref": {
+        "use_weekend": true,
+        "use_public_holiday": true,
+        "use_school_holiday": true
+    }
+}
