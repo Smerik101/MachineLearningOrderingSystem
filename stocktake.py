@@ -41,7 +41,7 @@ def get_sales():
 def update_state(state):
     state.df = state.get_dataset()
     pre_processing(state)
-    model_training()
+    model_training(state)
     state.current_state["buffer_stocktake"] = state.current_state["current_stocktake"]
     state.current_state["current_stocktake"] = state.today_date
     state.write_state()

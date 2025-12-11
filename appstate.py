@@ -1,17 +1,15 @@
-import pickle
 from datetime import timedelta, date
 import holidays
 import json
-import joblib
 import pandas as pd
-import numpy as np
+from pathlib import Path
 
 au_holidays = holidays.Australia(state='ACT', years=2025)
 
 class AppState:
 
     def __init__(self):
-        self.today_date = date.today() - timedelta(days=1)#Get and store todays date
+        self.today_date = date.today() + timedelta(days=2) #Get and store todays date
         self.today_day = self.today_date.weekday() #Get and store todays weekday (int)
         self.is_weekend = self._is_weekend() #Get and store weekend (bool)
         self.is_public_holiday = self._is_public_holiday() #Get and store public holiday (bool)
@@ -22,6 +20,9 @@ class AppState:
         self.df = self.get_dataset() #Get and store dataset
         self.get_config()
         self.get_state()
+
+        self.model_path = Path("./models")
+        self.pp_data = Path("./preprocessed")
 
         self.yesterday_date = self.yesterday_date.strftime("%d/%m/%Y") #Convert date format
         self.today_date = self.today_date.strftime("%d/%m/%Y") #Convert date format

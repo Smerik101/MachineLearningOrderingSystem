@@ -1,43 +1,68 @@
-import joblib
+from joblib import dump
 import numpy as np
 from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
+from pathlib import Path
+import json
 
 
-def model_training():
+def model_training(state):
+
+    with open ("model_params.json", "r") as f:
+        custom_params = json.load(f)
     
     # Load preprocessed data
-    data = np.load('preprocessed_data.npz')
-    X = data['X']
-    y = data['y']
+    for filename in state.pp_data.iterdir():
+        name = str(filename.name)[0:-4]
+        data = np.load(filename)
+        X = data['X']
+        y = data['y']
 
-    # Split into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.09, random_state=42)
+        if name in custom_params.keys():
+            params = custom_params[name]
 
-    # Initialize and train HistGradientBoostingRegressor. Tweak parameters for performance
-    model = HistGradientBoostingRegressor(
-        learning_rate=0.07,
-        max_iter=90,
-        max_depth=9,
-        min_samples_leaf=23,
-        l2_regularization=0.4,
-        random_state=42)
+        #Split into training and testing sets
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, shuffle=False)
+        
+        
+        # Initialize and train HistGradientBoostingRegressor. Tweak parameters for performance
+        model = HistGradientBoostingRegressor(
+            learning_rate=0.05,
+            max_iter=100,
+            max_leaf_nodes = 31,
+            min_samples_leaf=30,
+            l2_regularization=0.5,
+            early_stopping=True,
+            validation_fraction=0.2,
+            random_state=42)
 
-    model.fit(X_train, y_train)
+        if name in custom_params:
+            model.set_params(**params)
 
-    # Make predictions
-    y_pred = model.predict(X_test)
+        model.fit(X_train, y_train)
 
-    # Evaluate performance
-    print("MSE:", mean_squared_error(y_test, y_pred))
-    print("R²:", r2_score(y_test, y_pred))
+        # Make predictions
+        y_valid = model.predict(X_train)
+        y_pred = model.predict(X_test)
 
-    # Print shapes
-    print("Train shape:", X_train.shape)
-    print("Full data shape:", X.shape)
+        """
+        print(name)
+        # Evaluate performance
+        print("Validation")
+        print("MSE:", mean_squared_error(y_test, y_pred))
+        print("R²:", r2_score(y_test, y_pred))
 
-    # Save model
-    with open("linear_model.joblib", "wb") as f:
-        joblib.dump(model, f)
+        print("Training")
+        print("MSE:", mean_squared_error(y_train, y_valid))
+        print("R²:", r2_score(y_train, y_valid))
+
+        print(f"Diff:{((mean_squared_error(y_train, y_valid))/mean_squared_error(y_test, y_pred))*100}%")
+
+        print("\n")
+        """
+
+        # Save model
+        dump(model, f"{state.model_path}/{name}.joblib")
+  

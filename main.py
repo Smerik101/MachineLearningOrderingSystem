@@ -22,5 +22,5 @@ def main(state):
             print("Invalid entry, try again")
 
 pre_processing(state)
-model_training()
+model_training(state)
 main(state)

@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 from appstate import au_holidays
+from pathlib import Path
 
 
 # Convert int to day of week
@@ -59,11 +60,7 @@ def get_data():
         model = joblib.load(f)
     with open("encoder.pkl", "rb") as f:
         encoder = pickle.load(f)
-    with open("scaler.pkl", "rb") as f:
-        scaler = pickle.load(f)
-    with open("imputer.pkl", "rb") as f:
-        imputer = pickle.load(f)
-    return model, encoder, scaler, imputer
+    return model, encoder
 
 
 def get_array(state, day, dow, month, is_weekend):
@@ -80,26 +77,37 @@ def get_array(state, day, dow, month, is_weekend):
 
 # Predict usage
 def run_calculations(state, df):
-    order_window_predictions = {item: 0.0 for item in state.unique_products}
+
+    #Collect unique items based on available models
+    unique_items = {}
+    for file in state.model_path.iterdir():
+        file_data = file
+        file = str(((file.name)[0:-7]))
+        unique_items[file] = file_data
+
+    order_window_predictions = {item: 0.0 for item in unique_items}
+    # vvvv Load encoder | Initiate order dict ^^^^ #
+    with open("encoder.pkl", "rb") as f:
+        encoder = pickle.load(f)
+
     for day in get_inputs(state):
         dow = day["date"].weekday()
         month = day["date"].month
         is_weekend = int(dow in [5, 6])
-        model, encoder, scaler, imputer = get_data()
-
-        for item in state.unique_products:
+     
+        for key in unique_items.keys():
+            model = joblib.load((unique_items[key]))
             categorical = encoder.transform(
-                pd.DataFrame([[item]], columns=["Item Name"]))
+                pd.DataFrame([[key]], columns=["Item Name"]))
             numeric = get_array(state, day, dow, month, is_weekend)
             combined = np.hstack((numeric, categorical))
-            combined_imputed = imputer.transform(combined)
-            combined_scaled = scaler.transform(combined_imputed)
-            usage_pred = max(0, model.predict(combined_scaled)[0])
-            order_window_predictions[item] += usage_pred
+            usage_pred = max(0, model.predict(combined)[0])
+            order_window_predictions[key] += usage_pred
+            
 
     # Fetch leftover stock (last end stock from last count)
     latest_stock = {}
-    for item in state.unique_products:
+    for item in order_window_predictions:
         product_data = df[df["Item Name"] == item]
         if not product_data.empty:
             last_row = product_data.sort_values("Date").iloc[-1]
@@ -111,7 +119,7 @@ def run_calculations(state, df):
         columns=["Item", "Buffer", "Current Qty", "Projected Usage", "Proposed Order Qty"])
 
     # Calculate order using buffers and leftover stock
-    for item in state.unique_products:
+    for item in unique_items.keys():
         predicted_usage = order_window_predictions[item]
         current_stock = latest_stock[item]
         buffer = state.buffer_dict.get(item, 0)

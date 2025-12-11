@@ -1,8 +1,7 @@
 import pickle
 import numpy as np
 import pandas as pd
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder
 
 
 def pre_processing(state):
@@ -13,15 +12,13 @@ def pre_processing(state):
 
     # Remove rows with invalid or missing date
     df = df[df["Date"].notnull()]
+
     # Remove negative or missing usage values
     df = df[df["Usage"].notnull() & (df["Usage"] >= 0)]
 
     # Feature engineering
     df["DayOfWeek"] = df["Date"].dt.dayofweek
     df["Month"] = df["Date"].dt.month
-    df["IsWeekend"] = df["DayOfWeek"].isin([5, 6]).astype(int)
-    df["isSchoolHoliday"] = df["isSchoolHoliday"].fillna(0).astype(int)
-    df["isPublicHoliday"] = df["isPublicHoliday"].fillna(0).astype(int)
     df = df.sort_values(by=["Item Name", "Date"])
 
     # Define numeric features
@@ -35,29 +32,31 @@ def pre_processing(state):
     if state.feature_pref["use_school_holiday"] == False:
         numeric_features.remove("isSchoolHoliday")
 
-    # One-hot encode the item name
     encoder = OneHotEncoder(handle_unknown="ignore", sparse_output=False)
-    product_encoded = encoder.fit_transform(df[["Item Name"]])
 
-    # Combine features
-    X_numeric = df[numeric_features].values
-    X_combined = np.hstack((X_numeric, product_encoded))
+    for item in df["Item Name"].unique():
 
-    # Define target
-    y = df["Usage"].values
+        newdf = pd.DataFrame()
+        newdf = df[df["Item Name"].isin([item])]
 
-    # Impute and scale
-    imputer = SimpleImputer(strategy="mean")
-    scaler = StandardScaler()
-    X_imputed = imputer.fit_transform(X_combined)
-    X_scaled = scaler.fit_transform(X_imputed)
+        # Don't attempt to predict for items with under 2 weeks of entries
+        if newdf.shape[0] < 14:
+            continue
 
-    # Save outputs
-    np.savez("preprocessed_data.npz", X=X_scaled, y=y)
+        # One-hot encode the item name
+        product_encoded = encoder.fit_transform(newdf[["Item Name"]])
+
+        # Combine features
+        X_numeric = newdf[numeric_features].values
+        X_combined = np.hstack((X_numeric, product_encoded))
+
+        # Define target
+        y = newdf["Usage"].values
+
+        # Save outputs
+        np.savez(f"preprocessed/{item}.npz", X=X_combined, y=y)
+    
     with open("encoder.pkl", "wb") as f:
         pickle.dump(encoder, f)
-    with open("scaler.pkl", "wb") as f:
-        pickle.dump(scaler, f)
-    with open("imputer.pkl", "wb") as f:
-        pickle.dump(imputer, f)
+
 

@@ -5,7 +5,8 @@
         "BUN 4 INCH": 90,
         "BUN BIG MAC": 60,
         "BUN MCCRISPY": 30,
-        "BUN GOURMET": 30
+        "BUN GOURMET": 30,
+        "BUN GRAND": 20
     },
     "order_days": [
         1,
