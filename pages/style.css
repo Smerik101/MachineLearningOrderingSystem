@@ -1,0 +1,87 @@
+.title {
+    position: relative;
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 5px;
+    margin: 10px;
+}
+
+
+.title-text {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    margin: 15px;
+    font-size: 40px;
+    font-style: italic;
+}
+
+footer {
+    background-color: bisque;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding-top: 10px;
+}
+
+#login {
+    background-color: bisque;
+    text-align: center;
+    width: 25%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10%;
+    border: 2px solid black;
+    border-radius: 40px;
+    padding: 35px;
+    padding-bottom: 60px;
+}
+
+#login_button {
+    background-color: beige;
+    margin-bottom: 30px;
+    padding: 8px;
+    width: 100px;
+    border-width: 1px;
+    border-radius: 2px;
+}
+
+#login_inputs {
+    margin-bottom: 30px;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 8px;
+}
+
+.homenav {
+    background-color: bisque;
+    height: 78%;
+    margin: 10px;
+    border: 2px solid black;
+    border-radius: 5px;
+    padding: 10px;
+    position: fixed;
+    width: 250px;
+}
+
+.homenavlinks {
+    background-color: whitesmoke;
+    font-size: 25px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    text-decoration: dashed;
+    padding: 15px;
+    display: block;
+    margin: 10px;
+    text-align: center;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+.homecontent {
+    margin-left: 300px;
+    margin-right: 20px;
+    margin-top: 20px;
+    padding-left: 0px;
+    text-align: center;
+    border: 2px dashed black;
+}
