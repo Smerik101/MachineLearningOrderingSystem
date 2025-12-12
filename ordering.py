@@ -1,4 +1,3 @@
-import pickle
 import joblib
 import numpy as np
 import pandas as pd
@@ -55,14 +54,6 @@ def get_inputs(state):
     return day_inputs
 
 
-def get_data():
-    with open("linear_model.joblib", "rb") as f:
-        model = joblib.load(f)
-    with open("encoder.pkl", "rb") as f:
-        encoder = pickle.load(f)
-    return model, encoder
-
-
 def get_array(state, day, dow, month, is_weekend):
 
     numeric = np.array([[day["sales"], dow, month]])
@@ -72,6 +63,7 @@ def get_array(state, day, dow, month, is_weekend):
         numeric =  np.concatenate((numeric, [[day["school_holiday"]]]), axis=1)
     if state.feature_pref["use_public_holiday"] == True:
         numeric = np.concatenate((numeric, [[day["public_holiday"]]]), axis=1)
+    print(numeric)
     return numeric
 
 
@@ -87,8 +79,6 @@ def run_calculations(state, df):
 
     order_window_predictions = {item: 0.0 for item in unique_items}
     # vvvv Load encoder | Initiate order dict ^^^^ #
-    with open("encoder.pkl", "rb") as f:
-        encoder = pickle.load(f)
 
     for day in get_inputs(state):
         dow = day["date"].weekday()
@@ -97,12 +87,10 @@ def run_calculations(state, df):
      
         for key in unique_items.keys():
             model = joblib.load((unique_items[key]))
-            categorical = encoder.transform(
-                pd.DataFrame([[key]], columns=["Item Name"]))
             numeric = get_array(state, day, dow, month, is_weekend)
-            combined = np.hstack((numeric, categorical))
-            usage_pred = max(0, model.predict(combined)[0])
+            usage_pred = max(0, model.predict(numeric)[0])
             order_window_predictions[key] += usage_pred
+            print(order_window_predictions)
             
 
     # Fetch leftover stock (last end stock from last count)

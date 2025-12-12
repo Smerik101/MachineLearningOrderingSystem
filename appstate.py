@@ -9,7 +9,7 @@ au_holidays = holidays.Australia(state='ACT', years=2025)
 class AppState:
 
     def __init__(self):
-        self.today_date = date.today() + timedelta(days=2) #Get and store todays date
+        self.today_date = date.today() + timedelta(days=1) #Get and store todays date
         self.today_day = self.today_date.weekday() #Get and store todays weekday (int)
         self.is_weekend = self._is_weekend() #Get and store weekend (bool)
         self.is_public_holiday = self._is_public_holiday() #Get and store public holiday (bool)
