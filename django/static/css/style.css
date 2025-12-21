@@ -1,0 +1,73 @@
+body {
+    background-color: #c5d5c5;
+}
+
+footer {
+    background-color: bisque;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding-top: 10px;
+}
+
+
+
+
+/* ###############TITLE################## */
+
+.title {
+    position: relative;
+    background-color: #f0f0f0;
+    border: 2px solid black;
+    border-radius: 5px;
+    margin: 10px;
+}
+
+.title-text {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    margin: 15px;
+    font-size: 40px;
+    font-style: italic;
+}
+
+/* ###############TITLE################## */
+
+
+
+
+/* ###############NAVIGATION################## */
+
+.homenav {
+    background-color: #9fa9a3;
+    height: 78%;
+    margin: 10px;
+    border: 2px solid black;
+    padding: 10px;
+    position: fixed;
+    width: 250px;
+}
+
+.homenavlinks {
+    background-color: #e3e0cc;
+    font-size: 25px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    text-decoration: dashed;
+    padding: 15px;
+    display: block;
+    margin: 10px;
+    text-align: center;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+.homecontent {
+    margin-left: 300px;
+    margin-right: 20px;
+    margin-top: 20px;
+    padding-left: 0px;
+    text-align: center;
+}
+
+/* ###############NAVIGATION################## */

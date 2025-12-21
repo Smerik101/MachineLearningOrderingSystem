@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}
+    Stocktake
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/stocktake/style.css' %}">
+{% endblock %}
+
+{% block content %}  
+    <p style='font-size: 21px'>Stocktake Already Completed<p>
+    <a href='/stocktake' class='stocktake_buttons'>Back</a>
+{% endblock %}

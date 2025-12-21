@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <title>
+        {% block title %}
+            Smart Forecaster
+        {% endblock %}
+    </title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}
+    {% endblock %}
+</head>
+
+<body>
+    <div class="title">
+        <h2 class="title-text">Smart Forecaster</h2>
+    </div>
+
+    <nav class="homenav">
+        <a href="/home" class="homenavlinks">Dashboard</a> <br>
+        <a href="/stocktake" class="homenavlinks">Stocktake</a> <br>
+        <a href="/ordering" class="homenavlinks">Propose Order</a> <br>
+        <a href="/settings" class="homenavlinks">Settings</a> <br>
+        <a href="#" class="homenavlinks">Logout</a>
+    </nav>
+
+    <div class="homecontent">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <footer>
+        <p>Hey there im the footer lol</p>
+    </footer>
+
+</body>
+
+</html>

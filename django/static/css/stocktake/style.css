@@ -1,0 +1,12 @@
+.stocktake_buttons {
+    background-color: #e3e0cc;
+    font-size: 25px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    text-decoration: none;
+    padding: 20px;
+    display: block;
+    margin: 20px;
+    text-align: center;
+    border: 1px solid black;
+    border-radius: 10px;
+}

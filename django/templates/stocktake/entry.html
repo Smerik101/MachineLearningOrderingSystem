@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Stocktake
+{% endblock %}
+
+{% block content %}
+   <form method="post">
+    {% csrf_token %}
+    {{ formset.management_form }}
+    <a href='/stocktake'>
+        <button type='button'>Back</button>
+    </a>
+    
+
+    <table>
+        {% for form in formset %}
+        <tr>
+            <td>{{ form.instance.name }}</td>
+            <td>{{ form.counted }}</td>
+            {{form.id}}
+        </tr>
+        {% endfor %}
+    </table>
+
+    <button type="submit">Save Stocktake</button>
+</form>
+{% endblock %}

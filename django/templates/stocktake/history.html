@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Stocktake
+{% endblock %}
+
+{% block content %}
+    {% for stocktake in stocktakes %}
+        <article>
+            <p>{{stocktake.date}}</p>
+            <p>{{stocktake.user}}</p>
+            <p>{{stocktake.status}}</p>
+            <p>{{stocktake.created_at}}</p>
+            <p>{{stocktake.completed_at}}</p>
+        </article>
+{% endblock %}
