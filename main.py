@@ -24,3 +24,4 @@ def main(state):
 #pre_processing(state)
 #model_training(state)
 main(state)
+print(state.order_for_days)
