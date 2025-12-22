@@ -10,3 +10,34 @@
     border: 1px solid black;
     border-radius: 10px;
 }
+
+
+
+/*ENTRY*/
+.stocktake_form {
+    font-size: 14px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
+}
+
+.stocktake_table {
+    padding: 10px;
+}
+/*ENTRY*/
+
+
+
+/*HISTORY*/
+.stocktake_entries {
+    font-size: 14px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    padding: 15px;
+    padding-right: 60px;
+}
+
+.history_table {
+    border: 2px solid black;
+    border-radius: 20px;
+    padding: 10px;
+}
+/*HISTORY*/

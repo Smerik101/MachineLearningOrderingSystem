@@ -1,28 +1,37 @@
 {% extends 'layout.html' %}
+{% load static %}
 
 {% block title %}
     Stocktake
 {% endblock %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/stocktake/style.css' %}">
+{% endblock %}
+
 {% block content %}
-   <form method="post">
+   <form method="post", class='stocktake_form'>
     {% csrf_token %}
     {{ formset.management_form }}
-    <a href='/stocktake'>
-        <button type='button'>Back</button>
-    </a>
-    
+    {{ sales.management_form }}
 
     <table>
+         <tr style="margin: 20px">
+            <td class='stocktake_table'>Yesterday sales</td>
+            <td class='stocktake_table'> {{ sales.sales }}</td>
+        </tr>
         {% for form in formset %}
         <tr>
-            <td>{{ form.instance.name }}</td>
-            <td>{{ form.counted }}</td>
+            <td class='stocktake_table'>{{ form.instance.name }}</td>
+            <td class='stocktake_table'>{{ form.counted }}</td>
             {{form.id}}
         </tr>
         {% endfor %}
     </table>
 
-    <button type="submit">Save Stocktake</button>
+    <button type="submit", class='stocktake_buttons'>Save Stocktake</button>
+    <a href='/stocktake'>
+        <button type='button', class='stocktake_buttons'>Quit</button>
+    </a>
 </form>
 {% endblock %}

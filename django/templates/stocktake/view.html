@@ -1,0 +1,58 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/stocktake/style.css' %}">
+{% endblock %}
+
+{% block title %}
+    Stocktake
+{% endblock %}
+
+{% block content %}
+    <table class='history_table' style='margin-bottom: 20px'>
+        <caption style='font-size: 25px; margin: 10px;'>Stocktake Details</caption>
+        <thead>
+            <tr>
+                <th class='stocktake_entries'>Date</th>
+                <th class='stocktake_entries'>User</th>
+                <th class='stocktake_entries'>Status</th>
+                <th class='stocktake_entries'>Created At</th>
+                <th class='stocktake_entries'>Completed At</th>
+                <th class='stocktake_entries'>Sales</th>
+            <tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{stocktake.date}}</td>
+                <td>{{stocktake.user}}</td>
+                <td>{{stocktake.status}}</td>
+                <td>{{stocktake.created_at}}</td>
+                <td>{{stocktake.completed_at}}</td>
+                <td>{{stocktake.sales}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class='history_table'>  
+        <thead>
+            <tr>
+                <th class='stocktake_entries'>Item</th>
+                <th class='stocktake_entries'>Counted</th>
+                <th class='stocktake_entries'>Usage</th>
+            <tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td class='stocktake_entries'>{{ item.name }}</td>
+                <td class='stocktake_entries'>{{ item.counted }}</td>
+                <td class='stocktake_entries'>{{ item.usage }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>   
+    </table>
+    <a href='{% url 'stocktake history' %}'>
+        <button class='stocktake_buttons'>Back</button>
+    </a>
+{% endblock %}

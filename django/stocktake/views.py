@@ -1,9 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from .models import Stocktake, StocktakeItem
-from .forms import StocktakeItemsFormSet
-from .services import get_stocktake
-from home.models import UniqueItems
+from .forms import StocktakeItemsFormSet, SalesForm
+from .services import get_stocktake, update_stock
+from home.models import UniqueItem
 from django.db.utils import IntegrityError
+from django.utils import timezone
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 
@@ -12,14 +14,21 @@ def stocktake(request):
     return render(request, 'stocktake/stocktake.html')
 
 
+def stocktake_view(request, slug):
+    stocktake = get_object_or_404(Stocktake, slug=slug)
+    items = StocktakeItem.objects.filter(stocktake=stocktake)
+    return render(request, "stocktake/view.html", {"stocktake": stocktake, "items": items},)
+
+
 def entry(request):
     stocktake = get_stocktake()
-    items = UniqueItems.objects.all()
+    items = UniqueItem.objects.all()
     try:
         for item in items:
             StocktakeItem.objects.get_or_create(
             name=item.name,
-            stocktake=stocktake
+            stocktake=stocktake,
+            item=item
             )
     except IntegrityError:
         return render(request, 'stocktake/alreadycomp.html')
@@ -28,19 +37,27 @@ def entry(request):
 
     if request.method == "POST":
         formset = StocktakeItemsFormSet(request.POST, queryset=queryset)
-        stocktake.status = 'closed'
-        stocktake.save()
-        if formset.is_valid():
+        sales = SalesForm(request.POST, instance=stocktake)
+        if formset.is_valid() and sales.is_valid:
+            stocktake.status = 'Submitted'
+            stocktake.completed_at = timezone.now()
+            stocktake.save()
+            sales.save()
             formset.save()
+            update_stock(queryset)
             return render(request, 'stocktake/complete.html')
     else:
         formset = StocktakeItemsFormSet(queryset=queryset)
+        sales = SalesForm(instance=stocktake)
 
     return render(request, "stocktake/entry.html", {
-        "formset": formset, "stocktake": stocktake
+        "formset": formset, "stocktake": stocktake, "sales": sales
     })
     
 
 def history(request):
     stocktakes = Stocktake.objects.all().order_by('-date')
-    return render(request, "stocktake/history.html"), {'stocktakes': stocktakes}
+    context = {
+        'stocktakes': stocktakes
+    }
+    return render(request, "stocktake/history.html", context)

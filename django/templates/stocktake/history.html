@@ -1,16 +1,40 @@
 {% extends 'layout.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/stocktake/style.css' %}">
+{% endblock %}
 
 {% block title %}
     Stocktake
 {% endblock %}
 
 {% block content %}
-    {% for stocktake in stocktakes %}
-        <article>
-            <p>{{stocktake.date}}</p>
-            <p>{{stocktake.user}}</p>
-            <p>{{stocktake.status}}</p>
-            <p>{{stocktake.created_at}}</p>
-            <p>{{stocktake.completed_at}}</p>
-        </article>
+    <table class='history_table'>  
+        <caption style='font-size: 25px; margin: 10px;'>Stocktake History</caption>
+        <thead>
+            <tr>
+                <th class='stocktake_entries'>Status</th>
+                <th class='stocktake_entries'>Date</th>
+                <th class='stocktake_entries'>User</th>
+                <th class='stocktake_entries'>Created At</th>
+                <th class='stocktake_entries'>Completed At</th>
+            <tr>
+        </thead>
+        <tbody>
+            {% for stocktake in stocktakes %}
+            <tr>
+                <td class='stocktake_entries'>{{ stocktake.status }}</td>
+                <td class='stocktake_entries'>{{ stocktake.date }}</td>
+                <td class='stocktake_entries'>{{ stocktake.user }}</td> 
+                <td class='stocktake_entries'>{{ stocktake.created_at }}</td>
+                <td class='stocktake_entries'>{{ stocktake.completed_at }}</td>
+                <td><a href="{% url 'stocktake view' stocktake.slug %}"><button class='stocktake_buttons' style='padding: 8px; font-size: 18px'>View</button></a></td>
+            </tr>
+            {% endfor %}
+        </tbody>   
+    </table>
+     <a href='/stocktake'>
+        <button type='button', class='stocktake_buttons'>Back</button>
+    </a>
 {% endblock %}
