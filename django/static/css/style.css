@@ -32,6 +32,12 @@ footer {
     font-style: italic;
 }
 
+.user {
+    font-size: 25px;
+    margin: 10px;
+    text-align: center;
+}
+
 /* ###############TITLE################## */
 
 
@@ -71,3 +77,28 @@ footer {
 }
 
 /* ###############NAVIGATION################## */
+
+
+
+
+/* ###############LOGIN################## */
+#login {
+    background-color: bisque;
+    text-align: center;
+    width: 25%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10%;
+    border: 2px solid black;
+    border-radius: 40px;
+    padding: 35px;
+    padding-bottom: 60px;
+}
+
+.login_entry {
+    padding: 10px;
+    margin: 10px;
+}
+
+
+/* ###############LOGIN################## */

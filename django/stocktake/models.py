@@ -17,7 +17,7 @@ class Stocktake(models.Model):
 
     def __str__(self):
         return str(self.date)
-
+    
 
 class StocktakeItem(models.Model):
     name = models.CharField(max_length=20)

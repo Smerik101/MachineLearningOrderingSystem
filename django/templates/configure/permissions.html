@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+
+{% block title %}
+    Config
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/configure/style.css' %}">
+{% endblock %}
+
+
+{% block content %}
+    <form method="post">
+
+    {% csrf_token %}
+     
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+        </tr>
+        {{ formset.management_form }}
+        {% for form in formset %}
+        {{form.id}}
+        <tr>
+            <td>{{ form.username }}</td>
+            <td>{{ form.email }}</td>
+            <td>{{ form.group }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <button type="submit" class='buttons'>Save</button>
+    <button href="" type="button" class='buttons'>Cancel</button>
+</form>
+{% endblock %}

@@ -19,11 +19,12 @@
     </div>
 
     <nav class="homenav">
+        <p class='user'>User: {{request.user}}<p> <br>
         <a href="/home" class="homenavlinks">Dashboard</a> <br>
         <a href="/stocktake" class="homenavlinks">Stocktake</a> <br>
         <a href="/ordering" class="homenavlinks">Propose Order</a> <br>
-        <a href="/settings" class="homenavlinks">Settings</a> <br>
-        <a href="#" class="homenavlinks">Logout</a>
+        <a href="/configure" class="homenavlinks">Config</a> <br>
+        <a href="/home/logout" method='POST' class="homenavlinks">Logout</a>
     </nav>
 
     <div class="homecontent">

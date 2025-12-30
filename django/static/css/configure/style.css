@@ -1,0 +1,17 @@
+.buttons {
+    text-decoration: none;
+    background-color: #e3e0cc;
+    font-size: 25px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    padding: 15px;
+    display: block;
+    margin: 10px;
+    text-align: center;
+    border: 1px solid black;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.items_menu {
+    margin-left: 20px;
+}

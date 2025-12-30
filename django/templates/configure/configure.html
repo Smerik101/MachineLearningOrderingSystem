@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+
+{% block title %}
+    Settings
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/configure/style.css' %}">
+{% endblock %}
+
+
+{% block content %}
+        <p style='font-size: 21px'>Configuration - Select action to continue<p>
+        <a href ='{% url 'register' %}' class='buttons'>Add User</a>
+        <a href = '{% url 'user modify' %}' class='buttons'>Modify Users</a>
+        <a href ='{% url 'item modify' %}' class='buttons'>Modify Items</a>
+        <a  class='buttons'>Modify Delivery</a>
+    </a>
+{% endblock %}

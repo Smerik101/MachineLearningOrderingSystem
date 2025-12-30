@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+
+{% block title %}
+    Settings
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/configure/style.css' %}">
+{% endblock %}
+
+
+{% block content %}
+<form method="post">
+    {{ formset.management_form }}
+    {% csrf_token %}
+    <table>
+    {% for form in formset %}
+        <tr>
+            <th> {{ form.as_p }} </th>
+            <th> <button type="submit" name="delete" value="{{ form.instance.pk }}" class='buttons'> Remove </button> </th>        
+        </tr>  
+    {% endfor %}           
+    </table>
+    
+    <button type="submit" name="add" class='buttons'>Add item</button>
+    <button type="submit" class='buttons'>Save</button>
+</form>
+{% endblock %}

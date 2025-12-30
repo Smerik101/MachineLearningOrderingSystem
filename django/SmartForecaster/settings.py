@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'stocktake.apps.StocktakeConfig',
     'ordering.apps.OrderingConfig',
-    'settings.apps.SettingsConfig'
+    'configure.apps.ConfigureConfig'
 ]
 
 MIDDLEWARE = [
@@ -109,11 +109,15 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Australia/Sydney'
 
 USE_I18N = True
 
 USE_TZ = True
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+SESSION_COOKIE_AGE = 60 * 30
 
 
 # Static files (CSS, JavaScript, Images)

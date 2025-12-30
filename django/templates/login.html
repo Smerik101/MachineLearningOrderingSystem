@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="eu">
+
+<head>
+    {% load static %}
+    <title>Login</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<style>
+ 
+</style>
+
+<body>
+    <div class="title">
+        <h1 class="title-text">Smart Forecaster</h1>
+    </div>
+
+    <div id="login">
+        <h1 style="margin-bottom: 10%">Login to Continue</h1>
+        <form action='/home/login/' class='login_entry' method="post">
+            {% csrf_token %}
+            {{ form }}
+            {% if request.GET.next %}
+                <input type="hidden" name="next" value="{{request.GET.next}}"/>
+            {% endif %}
+        <button>Login</button>
+         </form>
+    </div>
+
+    <footer>
+        <p>This is the footer</p>
+    </footer>
+
+</body>
+
+</html>

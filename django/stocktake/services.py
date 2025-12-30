@@ -43,7 +43,7 @@ def get_stocktake():
         return None
     stocktake = Stocktake.objects.create(
                            date=date,
-                           user="erik", 
+                           user='', 
                            status="Open", 
                            created_at=timezone.now(), 
                            completed_at=None, 
