@@ -23,7 +23,7 @@ class StocktakeItem(models.Model):
     name = models.CharField(max_length=20)
     item = models.ForeignKey(to=UniqueItem, on_delete=models.CASCADE, default=None)
     stocktake = models.ForeignKey(to=Stocktake, on_delete=models.CASCADE, default=None)
-    counted = models.IntegerField(default=None, null=True)
+    counted = models.IntegerField(default=None, blank=True, null=True)
     usage = models.IntegerField(default=0)
 
     def __str__(self):

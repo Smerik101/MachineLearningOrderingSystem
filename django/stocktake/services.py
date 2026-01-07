@@ -13,9 +13,14 @@ def update_state(date):
             obj.save()
 
 
+def get_date():
+    date = timezone.now().date() - timedelta(days=1)
+    return date
+
+
 def get_info():
     au_holidays = holidays.Australia(state='ACT', years=2025)
-    date = timezone.now().date() - timedelta(days=1)
+    date = get_date()
     dow = date.weekday()
     pubhol = 0
     if date in au_holidays:
@@ -33,7 +38,7 @@ def update_stock(queryset):
         obj.save()
 
 
-def get_stocktake():
+def get_stocktake(user):
     date, dow, pubhol, schhol = get_info()
     update_state(date)
     check_stocktake = Stocktake.objects.filter(date=date)
@@ -43,7 +48,7 @@ def get_stocktake():
         return None
     stocktake = Stocktake.objects.create(
                            date=date,
-                           user='', 
+                           user=user, 
                            status="Open", 
                            created_at=timezone.now(), 
                            completed_at=None, 

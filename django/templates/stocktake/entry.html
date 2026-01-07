@@ -15,9 +15,11 @@
     {{ formset.management_form }}
     {{ sales.management_form }}
 
+    <input type="hidden" name="page" value="{{ page_obj.number }}">
+
     <table>
          <tr style="margin: 20px">
-            <td class='stocktake_table'>Yesterday sales</td>
+            <td class='stocktake_table'>Sales</td>
             <td class='stocktake_table'> {{ sales.sales }}</td>
         </tr>
         {% for form in formset %}
@@ -29,9 +31,18 @@
         {% endfor %}
     </table>
 
-    <button type="submit", class='stocktake_buttons'>Save Stocktake</button>
-    <a href='/stocktake'>
-        <button type='button', class='stocktake_buttons'>Quit</button>
-    </a>
+    {% if not page_obj.has_next %}
+        <button type="submit", name ='final', class='stocktake_buttons'>Submit Stocktake</button>
+    {% endif %}
+    <button type="submit", name='save', class='stocktake_buttons'>Quit</button>
+    {% if page_obj.has_previous %}
+        <button type="submit", name="prev">⬅ Prev</button>
+    {% endif %}
+
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+
+    {% if page_obj.has_next %}
+        <button type="submit", name="next">Next ➡</button>
+    {% endif %}
 </form>
 {% endblock %}
